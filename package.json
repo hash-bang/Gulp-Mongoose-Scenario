@@ -1,0 +1,28 @@
+{
+  "name": "gulp-mongoose-scenario",
+  "version": "0.1.0",
+  "description": "Gulp wrapper for mongoose-scenario",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hash-bang/Gulp-Mongoose-Scenario"
+  },
+  "keywords": [
+    "mongoose",
+    "mongo",
+    "scenario",
+    "population",
+    "database",
+    "setup",
+    "gulp"
+  ],
+  "author": {
+    "name": "Matt Carter",
+    "email": "m@ttcarter.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "event-stream": "~3.1.7",
+    "mongoose-scenario": "~0.2.0"
+  }
+}
