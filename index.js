@@ -1,24 +1,35 @@
+var _  = require('lodash');
 var gutil = require('gulp-util');
-var es = require('event-stream');
 var scenario = require('mongoose-scenario');
+var through = require('through');
 
 module.exports = function(options) {
-	return es.map(function(file, cb) {
-		if (file.isNull()) return cb(null, file); // pass along
-		if (file.isStream()) return cb(new Error("gulp-mongoose-scenario: Streaming not supported"));
+	var data = {};
 
-		var contents = file.contents.toString('utf8');
-		contents = JSON.parse(contents);
+	function bufferContents(file) {
+		// Sanity checks {{{
+		if (file.isNull()) return; // ignore
+		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat-json', 'Streaming not supported'));
+		// }}}
 
-		scenario(contents, options, function(err, data) {
-			if (err) return cb(err);
+		var obj = JSON.parse(file.contents.toString('utf8'));
+		_.assign(data, obj);
+	}
+
+	function endStream() {
+		var self = this;
+		scenario(data, options, function(err, progress) {
+			if (err) return gutil.log('Scenario error:'.red, err.toString().red);
 			if (!options.quiet) {
 				gutil.log('Database scenario created'.bold);
-				Object.keys(data.created).sort().forEach(function(collection) {
-					gutil.log(' * Created ' + data.created[collection].toString().cyan + ' ' + collection.magenta);
+				Object.keys(progress.created).sort().forEach(function(collection) {
+					gutil.log(' * Created ' + progress.created[collection].toString().cyan + ' ' + collection.magenta);
 				});
 			}
-			cb(null, file);
+			data = {};
+			self.emit('end');
 		});
-	});
+	}
+
+	return through(bufferContents, endStream);
 };

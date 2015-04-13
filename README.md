@@ -28,7 +28,7 @@ gulp.task('db', function(next) {
 	// Slurp in all the .json files located in models/scenarios and run them though mongoose-scenario
 
 	var scenario = require('gulp-mongoose-scenario');
-	gulp.src('models/scenarios/setup.json')
+	gulp.src('models/scenarios/**/*.json')
 		.pipe(scenario({connection: db, nuke: true}))
 		.on('end', function(err) {
 			if (err) return next(err);

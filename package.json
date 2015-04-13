@@ -1,6 +1,6 @@
 {
   "name": "gulp-mongoose-scenario",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Gulp wrapper for mongoose-scenario",
   "main": "index.js",
   "repository": {
@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "event-stream": "~3.1.7",
-    "mongoose-scenario": "latest"
+    "mongoose-scenario": "latest",
+    "through": "~2.3.7"
   }
 }
