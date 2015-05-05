@@ -13,7 +13,7 @@ module.exports = function(options) {
 		// }}}
 
 		var obj = JSON.parse(file.contents.toString('utf8'));
-		_.assign(data, obj);
+		_.merge(data, obj);
 	}
 
 	function endStream() {
