@@ -13,7 +13,13 @@ module.exports = function(options) {
 		// }}}
 
 		var obj = JSON.parse(file.contents.toString('utf8'));
-		_.merge(data, obj);
+		_.forEach(obj, function(rows, collection) {
+			if (!data[collection]) { // Doesn't already exist
+				data[collection] = rows;
+			} else { // Does exist - merge the records together
+				data[collection] = data[collection].concat(rows);
+			}
+		});
 	}
 
 	function endStream() {
