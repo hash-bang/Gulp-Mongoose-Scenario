@@ -24,7 +24,7 @@ module.exports = function(options) {
 
 	function endStream() {
 		var self = this;
-		scenario(data, options, function(err, progress) {
+		scenario.import(data, options, function(err, progress) {
 			if (err) return gutil.log('Scenario error:'.red, err.toString().red);
 			if (!options.quiet) {
 				gutil.log('Database scenario created'.bold);
