@@ -1,4 +1,5 @@
 var _  = require('lodash');
+var debug = require('debug')('gulp-mongoose-scenario');
 var gutil = require('gulp-util');
 var scenario = require('mongoose-scenario');
 var through = require('through');
@@ -6,36 +7,37 @@ var through = require('through');
 module.exports = function(options) {
 	var data = {};
 
-	function bufferContents(file) {
-		// Sanity checks {{{
-		if (file.isNull()) return; // ignore
-		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat-json', 'Streaming not supported'));
-		// }}}
+	return through(
+		function stream(file) {
+			// Sanity checks {{{
+			if (file.isNull()) return; // ignore
+			if (file.isStream()) return this.emit('error', new PluginError('gulp-concat-json', 'Streaming not supported'));
+			// }}}
 
-		var obj = JSON.parse(file.contents.toString('utf8'));
-		_.forEach(obj, function(rows, collection) {
-			if (!data[collection]) { // Doesn't already exist
-				data[collection] = rows;
-			} else { // Does exist - merge the records together
-				data[collection] = data[collection].concat(rows);
-			}
-		});
-	}
-
-	function endStream() {
-		var self = this;
-		scenario.import(data, options, function(err, progress) {
-			if (err) return gutil.log('Scenario error:'.red, err.toString().red);
-			if (!options.quiet) {
-				gutil.log('Database scenario created'.bold);
-				Object.keys(progress.created).sort().forEach(function(collection) {
-					gutil.log(' * Created ' + progress.created[collection].toString().cyan + ' ' + collection.magenta);
-				});
-			}
-			data = {};
-			self.emit('end');
-		});
-	}
-
-	return through(bufferContents, endStream);
+			debug('Concat file', file.path);
+			var obj = JSON.parse(file.contents.toString('utf8'));
+			_.forEach(obj, function(rows, collection) {
+				if (!data[collection]) { // Doesn't already exist
+					data[collection] = rows;
+				} else { // Does exist - merge the records together
+					data[collection] = data[collection].concat(rows);
+				}
+			});
+		},
+		function end() {
+			debug('Begin import');
+			scenario.import(data, options, (err, progress) => {
+				debug('End import');
+				if (err) return gutil.log(gutil.colors.red('Scenario error:'), err.toString());
+				if (!options.quiet) {
+					gutil.log('Database scenario created'.bold);
+					Object.keys(progress.created).sort().forEach(function(collection) {
+						gutil.log(' * Created ' + gutil.colors.cyan(progress.created[collection].toString()) + ' ' + gutil.colors.magenta(collection));
+					});
+				}
+				data = {};
+				this.emit('end');
+			});
+		}
+	);
 };
