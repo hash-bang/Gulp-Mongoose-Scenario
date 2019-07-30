@@ -1,6 +1,6 @@
 {
   "name": "gulp-mongoose-scenario",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Gulp wrapper for mongoose-scenario",
   "main": "index.js",
   "repository": {

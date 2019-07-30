@@ -30,7 +30,7 @@ module.exports = function(options) {
 				debug('End import');
 				if (err) return gutil.log(gutil.colors.red('Scenario error:'), err.toString());
 				if (!options.quiet) {
-					gutil.log('Database scenario created'.bold);
+					gutil.log(gutil.colors.bold('Database scenario created'));
 					Object.keys(progress.created).sort().forEach(function(collection) {
 						gutil.log(' * Created ' + gutil.colors.cyan(progress.created[collection].toString()) + ' ' + gutil.colors.magenta(collection));
 					});
