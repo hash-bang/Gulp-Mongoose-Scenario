@@ -7,14 +7,19 @@ Installation
 ------------
 Install via NPM:
 
-	npm install --save-dev gulp-mongoose-scenario
+```
+npm install --save-dev gulp-mongoose-scenario
+```
 
 
 Usage:
 
 
 ```javascript
-gulp.task('db', function(next) {
+var gulp = require('gulp');
+var scenario = require('gulp-mongoose-scenario');
+
+gulp.task('db', ()=> {
 	// Load all config files including your main DB handler
 	global.config = require('./config/global');
 	require('./config/db');
@@ -27,12 +32,21 @@ gulp.task('db', function(next) {
 
 	// Slurp in all the .json files located in models/scenarios and run them though mongoose-scenario
 
-	var scenario = require('gulp-mongoose-scenario');
-	gulp.src('models/scenarios/**/*.json')
+	return gulp.src('models/scenarios/**/*.json')
 		.pipe(scenario({connection: db, nuke: true}))
-		.on('end', function(err) {
-			if (err) return next(err);
-			next();
-		});
 });
+```
+
+
+If you wish to use `.js` files rather than raw JSON, run use something like [gulp-eval](https://www.npmjs.com/package/gulp-eval) earlier in the pipeline:
+
+```javascript
+var eval = require('gulp-eval');
+var gulp = require('gulp');
+
+gulp.task('scenario', ()=>
+	gulp.src('models/scenarios/**/*.{js,json}')
+		.pipe(eval())
+		.pipe(scenario({connection: db, nuke: true}))
+)
 ```

@@ -15,7 +15,9 @@ module.exports = function(options) {
 			// }}}
 
 			debug('Concat file', file.path);
-			var obj = JSON.parse(file.contents.toString('utf8'));
+
+			// Use file.data if present (probably decoded via gulp-eval or the like) otherwise decode the contents as JSON
+			var obj = file.data ? file.data : JSON.parse(file.contents.toString('utf8'));
 			_.forEach(obj, function(rows, collection) {
 				if (!data[collection]) { // Doesn't already exist
 					data[collection] = rows;
